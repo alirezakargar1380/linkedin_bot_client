@@ -129,6 +129,7 @@ export default class Profile extends Component {
                         <Th>Linkedin page</Th>
                         <Th>user connection sections</Th>
                         <Th>connection number</Th>
+                        <Th>section details</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
@@ -164,7 +165,7 @@ export default class Profile extends Component {
                                 href={"/user/" + item._id}>
                                 <Button
                                   colorScheme={'linkedin'}
-                                  isDisabled={(item.exportedConnectionData && !this.state.isLoading && item.connection_link) ? false : true}>
+                                  isDisabled={(item.exportedSectionsData && !this.state.isLoading) ? false : true}>
                                   <AddIcon as={ExternalLinkIcon} />
                                 </Button>
                               </Box>
