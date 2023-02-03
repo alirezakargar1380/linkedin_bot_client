@@ -13,7 +13,7 @@ export default function Sidebar() {
                 </NavLink>
             </ListItem>
             <ListItem>
-                <NavLink to={"/profile"}>profile</NavLink>
+                <NavLink to={"/my_connections"}>my connections</NavLink>
             </ListItem>
         </List>
     )

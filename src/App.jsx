@@ -1,8 +1,9 @@
-import { 
-  createBrowserRouter, 
-  createRoutesFromElements, 
-  Route, 
-  RouterProvider 
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+  useParams
 } from 'react-router-dom'
 
 // layouts and pages
@@ -12,19 +13,28 @@ import Create from './pages/Create'
 import Profile from './pages/Profile'
 
 // router and routes
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/" element={<RootLayout />}>
-      <Route index element={<Dashboard />} />
-      <Route path="create" element={<Create />} />
-      <Route path="profile" element={<Profile />} />
-    </Route>
+const router = () => {
+  const Wapper = () => {
+    const params = useParams()
+    return <Create match={params} />
+  }
+
+  const params = useParams()
+  console.log(params)
+  return createBrowserRouter(
+    createRoutesFromElements(
+      <Route path="/" element={<RootLayout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="/user/:user_id" element={<Wapper />} />
+        <Route path="my_connections" element={<Profile />} />
+      </Route>
+    )
   )
-)
+}
 
 function App() {
   return (
-    <RouterProvider router={router} />
+    <RouterProvider router={router()} />
   )
 }
 
