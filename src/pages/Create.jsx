@@ -117,7 +117,26 @@ export default class Create extends Component {
             </Heading>
           </CardHeader>
           <CardBody>
-            <Text fontSize='xl'>{this.state.user?.about?.text}</Text>
+            <TableContainer>
+              <Table variant='striped'>
+                <Thead>
+                  <Tr>
+                    <Th>title</Th>
+                    <Th>value</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {this.state.user?.contactinfos?.map((item, index) => {
+                    return (
+                      <Tr key={index}>
+                        <Td>{item.title}</Td>
+                        <Td>{item.value}</Td>
+                      </Tr>
+                    )
+                  })}
+                </Tbody>
+              </Table>
+            </TableContainer>
           </CardBody>
         </Card>
         <Card mb={10}>
@@ -178,6 +197,35 @@ export default class Create extends Component {
                       <Tr key={index}>
                         <Td>{item.title}</Td>
                         <Td>{item.des}</Td>
+                      </Tr>
+                    )
+                  })}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </CardBody>
+        </Card>
+        <Card mb={10}>
+          <CardHeader>
+            <Heading size={'md'}>
+              Courses
+            </Heading>
+          </CardHeader>
+          <CardBody>
+            <TableContainer>
+              <Table variant='striped'>
+                <Thead>
+                  <Tr>
+                    <Th>title</Th>
+                    <Th>description</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {this.state.user?.courses?.map((item, index) => {
+                    return (
+                      <Tr key={index}>
+                        <Td>{item.title}</Td>
+                        <Td>{item.description}</Td>
                       </Tr>
                     )
                   })}
