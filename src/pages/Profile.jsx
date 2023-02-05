@@ -21,23 +21,29 @@ export default class Profile extends Component {
     super()
     this.state = {
       data: [],
-      isLoading: true
+      isLoading: true,
+      count: "1",
+      pagination: []
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.exportingMyConnectionSections = this.exportingMyConnectionSections.bind(this)
   }
 
   componentDidMount() {
-    this.getData()
+    this.getData(1)
   }
 
-  getData() {
-    axios.get(`http://localhost:3333/api/connections/my_connection/1`)
+  getData(page) {
+    console.log(page)
+    axios.get(`http://localhost:3333/api/connections/my_connection/${page}`)
       .then(({ data }) => {
+        console.log(data.data)
         this.setState({
-          data: data,
+          data: data.data,
           isLoading: false,
-          count: "0"
+          pagination: data.pagination,
+          current_page: page
         })
       })
   }
@@ -74,6 +80,15 @@ export default class Profile extends Component {
       })
   }
 
+  exportingMyConnectionSections() {
+    this.setState({
+      isLoading: true
+    })
+    axios.post(`http://localhost:3333/api/bot/exporting/my_connection/all_sections_info/${this.state.count}`).then(() => {
+      this.getData(this.state.current_page)
+    })
+  }
+
   render() {
     return (
       <Formik>
@@ -82,21 +97,15 @@ export default class Profile extends Component {
             <CardHeader>
               <Stack spacing={4} direction='row' align='center'>
                 <Button type='submit' colorScheme='linkedin' size='sm' isDisabled={(this.state.data.length) ? true : false}>Export My Connections Name's</Button>
-                <Input placeholder='count' htmlSize={8} width='auto' name='count' onChange={this.handleChange} />
-                <Button type='submit' colorScheme='linkedin' size='sm' isDisabled={(this.state.data.length && !this.state.isLoading) ? false : true} onClick={() => {
-                  this.setState({
-                    isLoading: true
-                  })
-                  axios.get(`http://localhost:3333/api/connections/exporting/my_connection/all_sections_info/${this.state.count}`).then(() => {
-                    this.getData()
-                  })
-                }}>Export My Connections Section's</Button>
+                <Input placeholder='count' value={this.state.count} htmlSize={8} width='auto' name='count' onChange={this.handleChange} />
+                <Button type='submit' colorScheme='linkedin' size='sm' isDisabled={(this.state.data.length && !this.state.isLoading) ? false : true}
+                  onClick={this.exportingMyConnectionSections}>Export My Connections Section's</Button>
                 <Button type='button' colorScheme={'linkedin'} size='sm' isDisabled={(!this.state.isLoading) ? false : true} onClick={() => {
                   this.setState({
                     isLoading: true
                   })
-                  axios.get(`http://localhost:3333/api/bot/exporting/user_connection/${this.state.count}`).then(() => {
-                    this.getData()
+                  axios.post(`http://localhost:3333/api/bot/exporting/user_connection/${this.state.count}`).then(() => {
+                    this.getData(this.state.current_page)
                   })
                     .catch((e) => {
                       this.setState({
@@ -110,7 +119,7 @@ export default class Profile extends Component {
                     isLoading: true
                   })
                   axios.delete(`http://localhost:3333/api/connections/delete_all`).then(() => {
-                    this.getData()
+                    this.getData(this.state.current_page)
                   })
                 }}>Reset</Button>
               </Stack>
@@ -127,7 +136,7 @@ export default class Profile extends Component {
                         <Th>exported Connection list?</Th>
                         <Th>exported section Data?</Th>
                         <Th>Linkedin page</Th>
-                        <Th>user connection sections</Th>
+                        {/* <Th>user connection sections</Th> */}
                         <Th>connection number</Th>
                         <Th>section details</Th>
                       </Tr>
@@ -145,7 +154,7 @@ export default class Profile extends Component {
                                 <AddIcon as={ExternalLinkIcon} />
                               </Box>
                             </Td>
-                            <Td>
+                            {/* <Td>
                               <Button
                                 colorScheme={'linkedin'}
                                 isDisabled={(item.exportedConnectionData && !this.state.isLoading && item.connection_link) ? false : true}
@@ -154,7 +163,7 @@ export default class Profile extends Component {
                                 }}>
                                 Export This User Connection Sections
                               </Button>
-                            </Td>
+                            </Td> */}
                             <Td>
                               {item.connections_names.length}
                             </Td>
@@ -178,6 +187,21 @@ export default class Profile extends Component {
                 </TableContainer>
               }
             </CardBody>
+            <CardFooter justifyContent={'center'}>
+              <Stack spacing={0.5} direction='row' align='center'>
+                {this.state.pagination.map((item, index) => {
+                  return (
+                    <Button
+                      key={index}
+                      isDisabled={item.disabled}
+                      onClick={() => {
+                        this.getData(item.value)
+                      }}
+                      colorScheme={(item.value === this.state.current_page) ? 'facebook' : "blue"} size='xs'>{item.value}</Button>
+                  )
+                })}
+              </Stack>
+            </CardFooter>
           </Card>
         </Form>
       </Formik >

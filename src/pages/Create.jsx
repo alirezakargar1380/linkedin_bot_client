@@ -9,6 +9,11 @@ import {
   Td,
   TableCaption,
   TableContainer,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
   Container, Heading,
   Card, CardHeader, CardBody, CardFooter, Stack, Button, ListIcon, Box, FormControl, Input, Spinner, FormHelperText, Text
 } from '@chakra-ui/react'
@@ -28,7 +33,7 @@ export default class Create extends Component {
 
   componentDidMount() {
     const { user_id } = this.props.match
-    axios.get(`http://localhost:3333/api/connections/${user_id}`).then(({ data }) => {
+    axios.get(`http://localhost:3333/api/connections/user_connection/${user_id}`).then(({ data }) => {
       this.setState({
         connections: data
       })
@@ -44,6 +49,15 @@ export default class Create extends Component {
   render() {
     return (
       <>
+        <Card mb={10}>
+          <CardHeader>
+            <Heading size={'md'}>Name Of User</Heading>
+          </CardHeader>
+          <CardBody>
+            {this.state.user?.name}
+          </CardBody>
+        </Card>
+
         <Card mb={10}>
           <CardHeader>
             <Heading size={'md'}>user connection list</Heading>
@@ -139,6 +153,7 @@ export default class Create extends Component {
             </TableContainer>
           </CardBody>
         </Card>
+
         <Card mb={10}>
           <CardHeader>
             <Heading size={'md'}>
@@ -149,6 +164,43 @@ export default class Create extends Component {
             <Text fontSize='xl'>{this.state.user?.about?.text}</Text>
           </CardBody>
         </Card>
+
+        <Card mb={10}>
+          <CardHeader>
+            <Heading size={'md'}>
+              Experience
+            </Heading>
+          </CardHeader>
+          <CardBody>
+            <Accordion>
+              {this.state.user?.experience?.map((item, index) => {
+                return (
+                  <AccordionItem key={index}>
+                    <AccordionButton>
+                      <Box as="span" flex='1' textAlign='left'>
+                        <Text fontSize={'md'}>{item.title}</Text>
+                        <Text fontSize={'sm'} color={'gray.400'}>{item.time}</Text>
+                        <Text fontSize={'sm'} color={'gray.400'}>{item.desAboutCompany}</Text>
+                        <Text fontSize={'sm'} color={'gray.400'}>{item.location}</Text>
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                      {item.subset.map((item, index) => (
+                        <Box mt={3} key={index}>
+                          <Text bgColor={'gray.400'}>{item.title}</Text>
+                          <Text bgColor={'gray.300'}>{item.time}</Text>
+                        </Box>
+                      ))}
+                      <Text fontSize={'sm'} color={'gray.500'}>{item.description}</Text>
+                    </AccordionPanel>
+                  </AccordionItem>
+                )
+              })}
+            </Accordion>
+          </CardBody>
+        </Card>
+
         <Card mb={10}>
           <CardHeader>
             <Heading size={'md'}>
