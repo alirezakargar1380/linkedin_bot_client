@@ -59,10 +59,10 @@ export default class Profile extends Component {
     this.setState({
       isLoading: true
     })
-    axios.get(`http://localhost:3333/api/bot/info/my_connection`)
+    axios.post(`http://localhost:3333/api/bot/exporting/my_connection`)
       .then(({ data }) => {
+        this.getData(1)
         this.setState({
-          data: data,
           isLoading: false
         })
       })

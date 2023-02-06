@@ -53,11 +53,12 @@ export default class Create extends Component {
     })
   }
 
-  exportUsersConnectionSections(_id) {
+  exportUsersConnectionSections() {
+    const { user_id } = this.props.match
     this.setState({
       isLoading: true
     })
-    axios.post(`http://localhost:3333/api/bot/exporting/user_connection/sections/${this.state.count}/${_id}`)
+    axios.post(`http://localhost:3333/api/bot/exporting/user_connection/sections/${this.state.count}/${user_id}`)
       .then(({ data }) => {
         this.setState({
           isLoading: false
@@ -90,7 +91,7 @@ export default class Create extends Component {
                 // isDisabled={(item.user.exportedConnectionData && !this.state.isLoading && item.user.connection_link) ? false : true}
                 isDisabled={(!this.state.isLoading) ? false : true}
                 onClick={() => {
-                  this.exportUsersConnectionSections(item.userId)
+                  this.exportUsersConnectionSections()
                 }}>
                 Export {this.state.user?.name + "'s"} Connection users Sections
               </Button>
@@ -112,7 +113,7 @@ export default class Create extends Component {
                     console.log(e.response.data)
                   })
               }}>Export {this.state.user?.name + "'s"} Connection Name's</Button>
-              
+
             </Stack>
           </CardHeader>
           <CardBody>
