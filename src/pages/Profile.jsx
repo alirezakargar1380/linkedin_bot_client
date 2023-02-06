@@ -104,7 +104,7 @@ export default class Profile extends Component {
                   this.setState({
                     isLoading: true
                   })
-                  axios.post(`http://localhost:3333/api/bot/exporting/user_connection/${this.state.count}`).then(() => {
+                  axios.post(`http://localhost:3333/api/bot/exporting/user_connection/${this.state.count}?my_connection=1`).then(() => {
                     this.getData(this.state.current_page)
                   })
                     .catch((e) => {

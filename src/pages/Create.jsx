@@ -27,23 +27,43 @@ export default class Create extends Component {
     this.state = {
       connections: [],
       user: {},
-      isLoading: true
+      isLoading: false,
+      count: 10
     }
   }
 
   componentDidMount() {
+    const { user_id } = this.props.match
+    this.getUserConnection()
+
+    axios.get(`http://localhost:3333/api/connections/all_sections/info/${user_id}`).then(({ data }) => {
+      console.log(data)
+      this.setState({
+        user: data[0]
+      })
+    })
+  }
+
+  getUserConnection() {
     const { user_id } = this.props.match
     axios.get(`http://localhost:3333/api/connections/user_connection/${user_id}`).then(({ data }) => {
       this.setState({
         connections: data
       })
     })
-    axios.get(`http://localhost:3333/api/connections/all_sections/info/${user_id}`).then(({ data }) => {
-      console.log(data[0])
-      this.setState({
-        user: data[0]
-      })
+  }
+
+  exportUsersConnectionSections(_id) {
+    this.setState({
+      isLoading: true
     })
+    axios.post(`http://localhost:3333/api/bot/exporting/user_connection/sections/${this.state.count}/${_id}`)
+      .then(({ data }) => {
+        this.setState({
+          isLoading: false
+        })
+        this.getUserConnection()
+      })
   }
 
   render() {
@@ -61,6 +81,39 @@ export default class Create extends Component {
         <Card mb={10}>
           <CardHeader>
             <Heading size={'md'}>user connection list</Heading>
+            <Stack direction={'row'}>
+
+
+              <Button
+                colorScheme={'linkedin'}
+                size='sm'
+                // isDisabled={(item.user.exportedConnectionData && !this.state.isLoading && item.user.connection_link) ? false : true}
+                isDisabled={(!this.state.isLoading) ? false : true}
+                onClick={() => {
+                  this.exportUsersConnectionSections(item.userId)
+                }}>
+                Export {this.state.user?.name + "'s"} Connection users Sections
+              </Button>
+
+
+              <Button type='button' colorScheme={'linkedin'} size='sm' isDisabled={(!this.state.isLoading) ? false : true} onClick={() => {
+                this.setState({
+                  isLoading: true
+                })
+                const { user_id } = this.props.match
+                axios.post(`http://localhost:3333/api/bot/exporting/user_connection/${this.state.count}?my_connection=0&id=${user_id}`)
+                  .then(() => {
+                    this.getUserConnection()
+                  })
+                  .catch((e) => {
+                    this.setState({
+                      isLoading: false
+                    })
+                    console.log(e.response.data)
+                  })
+              }}>Export {this.state.user?.name + "'s"} Connection Name's</Button>
+              
+            </Stack>
           </CardHeader>
           <CardBody>
             {(!this.state.connections.length) ? <Text fontSize='xl'>There is no data to show</Text> :
@@ -69,37 +122,52 @@ export default class Create extends Component {
                   <Thead>
                     <Tr>
                       <Th>name</Th>
+                      <Th>exported section Data?</Th>
+                      <Th>exported Connection list?</Th>
                       {/* <Th>is From MyConnection?</Th>
-                        <Th>exported Connection list?</Th>
-                        <Th>exported section Data?</Th>
+                        
+                        
                         <Th>Linkedin page</Th>
                         <Th>user connection sections</Th>
-                        <Th>connection number</Th> */}
+                        */}
+                      <Th>section details</Th>
+                      <Th>connection link</Th>
+
                     </Tr>
                   </Thead>
                   <Tbody>
                     {this.state.connections.map((item, index) => {
+                      console.log(item.user.connection_link)
                       return (
                         <Tr key={index}>
                           <Td>{item.user.name}</Td>
-                          {/* <Td>{(item.user.isFromMyConnection) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>
-                            <Td>{(item.user.exportedConnectionData) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>
-                            <Td>{(item.user.exportedSectionsData) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>
+                          <Td>{(item.user.exportedSectionsData) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>
+                          <Td>{(item.user.exportedConnectionData) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>
+                          <Td>
+                            <Box
+                              as='a'
+                              color='teal.400'
+                              href={"/user/" + item.user._id}>
+                              <Button
+                                colorScheme={'linkedin'}
+                                isDisabled={(item.user.exportedSectionsData && !this.state.isLoading) ? false : true}>
+                                <AddIcon as={ExternalLinkIcon} />
+                              </Button>
+                            </Box>
+                          </Td>
+                          <Td>{(item.user.connection_link) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>
+                          <Td>
+
+                          </Td>
+
+
+                          {/* 
                             <Td textAlign={"center"}>
                               <Box as='a' color='teal.400' href={item.link}>
                                 <AddIcon as={ExternalLinkIcon} />
                               </Box>
                             </Td>
-                            <Td>
-                              <Button
-                                colorScheme={'linkedin'}
-                                isDisabled={(item.user.exportedConnectionData && !this.state.isLoading && item.user.connection_link) ? false : true}
-                                onClick={() => {
-                                  this.exportUsersConnectionSections(item._id)
-                                }}>
-                                Export This User Connection Sections
-                              </Button>
-                            </Td>
+                            
                             <Td>
                               {item.user.connections_names.length}
                             </Td>
@@ -124,6 +192,7 @@ export default class Create extends Component {
             }
           </CardBody>
         </Card>
+
         <Card mb={10}>
           <CardHeader>
             <Heading size={'md'}>
@@ -193,6 +262,35 @@ export default class Create extends Component {
                         </Box>
                       ))}
                       <Text fontSize={'sm'} color={'gray.500'}>{item.description}</Text>
+                    </AccordionPanel>
+                  </AccordionItem>
+                )
+              })}
+            </Accordion>
+          </CardBody>
+        </Card>
+
+        <Card mb={10}>
+          <CardHeader>
+            <Heading size={'md'}>
+              educations
+            </Heading>
+          </CardHeader>
+          <CardBody>
+            <Accordion>
+              {this.state.user?.educations?.map((item, index) => {
+                return (
+                  <AccordionItem key={index}>
+                    <AccordionButton>
+                      <Box as="span" flex='1' textAlign='left'>
+                        <Text fontSize={'md'}>{item.title}</Text>
+                        <Text fontSize={'sm'} color={'gray.400'}>{item.year}</Text>
+                        <Text fontSize={'sm'} color={'gray.400'}>{item.aboutUni}</Text>
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                      <Text fontSize={'sm'} color={'gray.500'}>{item.des}</Text>
                     </AccordionPanel>
                   </AccordionItem>
                 )
