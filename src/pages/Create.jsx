@@ -28,8 +28,10 @@ export default class Create extends Component {
       connections: [],
       user: {},
       isLoading: false,
+      does_users_have_connection: false,
       count: 10
     }
+    this.handleChange = this.handleChange.bind(this)
   }
 
   componentDidMount() {
@@ -58,7 +60,7 @@ export default class Create extends Component {
     this.setState({
       isLoading: true
     })
-    axios.post(`http://localhost:3333/api/bot/exporting/user_connection/sections/${this.state.count}/${user_id}`)
+    axios.post(`http://localhost:3333/api/bot/exporting/user_connection/all_sections_info/${this.state.count}/${user_id}`)
       .then(({ data }) => {
         this.setState({
           isLoading: false
@@ -67,7 +69,14 @@ export default class Create extends Component {
       })
   }
 
+  handleChange(e) {
+    this.setState({
+      [e.target.name]: e.target.value
+    })
+  }
+
   render() {
+    console.log(this.state.isLoading)
     return (
       <>
         <Card mb={10}>
@@ -81,15 +90,16 @@ export default class Create extends Component {
 
         <Card mb={10}>
           <CardHeader>
-            <Heading size={'md'}>user connection list</Heading>
+            <Heading size={'md'} mb={'3'}>user connection list</Heading>
             <Stack direction={'row'}>
 
-
+              <Input placeholder='count' value={this.state.count} htmlSize={8} width='auto' name='count' onChange={this.handleChange} />
               <Button
                 colorScheme={'linkedin'}
                 size='sm'
-                // isDisabled={(item.user.exportedConnectionData && !this.state.isLoading && item.user.connection_link) ? false : true}
-                isDisabled={(!this.state.isLoading) ? false : true}
+                isDisabled={(this.state.user.exportedSectionsData && this.state.user.connection_link && this.state.connections.length) ? false : true}
+                // isDisabled={(this.state.user.link) ? false : true}
+                // && !this.state.isLoading
                 onClick={() => {
                   this.exportUsersConnectionSections()
                 }}>
@@ -97,22 +107,23 @@ export default class Create extends Component {
               </Button>
 
 
-              <Button type='button' colorScheme={'linkedin'} size='sm' isDisabled={(!this.state.isLoading) ? false : true} onClick={() => {
-                this.setState({
-                  isLoading: true
-                })
-                const { user_id } = this.props.match
-                axios.post(`http://localhost:3333/api/bot/exporting/user_connection/${this.state.count}?my_connection=0&id=${user_id}`)
-                  .then(() => {
-                    this.getUserConnection()
+              <Button type='button' colorScheme={'linkedin'} size='sm'
+                isDisabled={(this.state.does_users_have_connection) ? false : true}
+                onClick={() => {
+                  this.setState({
+                    isLoading: true
                   })
-                  .catch((e) => {
-                    this.setState({
-                      isLoading: false
+                  const { user_id } = this.props.match
+                  axios.post(`http://localhost:3333/api/bot/exporting/user_connection/${this.state.count}?my_connection=0&id=${user_id}`)
+                    .then(() => {
+                      this.getUserConnection()
                     })
-                    console.log(e.response.data)
-                  })
-              }}>Export {this.state.user?.name + "'s"} Connection Name's</Button>
+                    .catch((e) => {
+                      this.setState({
+                        isLoading: false
+                      })
+                    })
+                }}>Export {this.state.user?.name + "'s"} Connection Name's</Button>
 
             </Stack>
           </CardHeader>
@@ -138,7 +149,9 @@ export default class Create extends Component {
                   </Thead>
                   <Tbody>
                     {this.state.connections.map((item, index) => {
-                      console.log(item.user.connection_link)
+                      if (item.user.connection_link) this.setState({
+                        does_users_have_connection: true
+                      })
                       return (
                         <Tr key={index}>
                           <Td>{item.user.name}</Td>
