@@ -72,7 +72,7 @@ export default class Profile extends Component {
     this.setState({
       isLoading: true
     })
-    axios.get(`http://localhost:3333/api/bot/exporting/user_connection/sections/${this.state.count}/${_id}`)
+    axios.get(`http://localhost:3333/api/bot/exporting/user_connection/all_sections_info/${this.state.count}/${_id}`)
       .then(({ data }) => {
         this.setState({
           isLoading: false
@@ -100,7 +100,7 @@ export default class Profile extends Component {
                 <Input placeholder='count' value={this.state.count} htmlSize={8} width='auto' name='count' onChange={this.handleChange} />
                 <Button type='submit' colorScheme='linkedin' size='sm' isDisabled={(this.state.data.length && !this.state.isLoading) ? false : true}
                   onClick={this.exportingMyConnectionSections}>Export My Connections Section's</Button>
-                <Button type='button' colorScheme={'linkedin'} size='sm' isDisabled={(!this.state.isLoading) ? false : true} onClick={() => {
+                <Button type='button' whiteSpace={'pre-line'} colorScheme={'linkedin'} size='sm' isDisabled={(this.state.isLoading || this.state.data.length) ? false : true} onClick={() => {
                   this.setState({
                     isLoading: true
                   })
@@ -113,7 +113,9 @@ export default class Profile extends Component {
                       })
                       console.log(e.response.data)
                     })
-                }}>Export Users Connection Name's</Button>
+                }}>
+                  <Text width={'100%'} isDisabled={(!this.state.isLoading) ? false : true} py={"5"}>Export Users Connection Name's</Text>
+                </Button>
                 <Button type='button' colorScheme={'red'} size='sm' isDisabled={(!this.state.isLoading) ? false : true} onClick={() => {
                   this.setState({
                     isLoading: true
