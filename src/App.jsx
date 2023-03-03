@@ -9,14 +9,14 @@ import {
 // layouts and pages
 import RootLayout from './layouts/RootLayout'
 import Dashboard from './pages/Dashboard'
-import Create from './pages/Create'
-import Profile from './pages/Profile'
+import User from './pages/User'
+import MyConnections from './pages/MyConnections'
 
 // router and routes
 const router = () => {
   const Wapper = () => {
     const params = useParams()
-    return <Create match={params} />
+    return <User match={params} />
   }
 
   const params = useParams()
@@ -26,7 +26,7 @@ const router = () => {
       <Route path="/" element={<RootLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="/user/:user_id" element={<Wapper />} />
-        <Route path="my_connections" element={<Profile />} />
+        <Route path="my_connections" element={<MyConnections />} />
       </Route>
     )
   )

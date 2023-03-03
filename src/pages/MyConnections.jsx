@@ -16,7 +16,7 @@ import axios from 'axios'
 import { Component } from 'react'
 import { Field, Form, Formik } from 'formik';
 
-export default class Profile extends Component {
+export default class MyConnections extends Component {
   constructor() {
     super()
     this.state = {
@@ -27,6 +27,7 @@ export default class Profile extends Component {
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.ResetApi = this.ResetApi.bind(this)
     this.exportingMyConnectionSections = this.exportingMyConnectionSections.bind(this)
   }
 
@@ -89,6 +90,15 @@ export default class Profile extends Component {
     })
   }
 
+  ResetApi() {
+    this.setState({
+      isLoading: true
+    })
+    axios.delete(`http://localhost:3333/api/connections/delete_all`).then(() => {
+      this.getData(this.state.current_page)
+    })
+  }
+
   render() {
     return (
       <Formik>
@@ -98,32 +108,28 @@ export default class Profile extends Component {
               <Stack spacing={4} direction='row' align='center'>
                 <Button type='submit' colorScheme='linkedin' size='sm' isDisabled={(this.state.data.length) ? true : false}>Export My Connections Name's</Button>
                 <Input placeholder='count' value={this.state.count} htmlSize={8} width='auto' name='count' onChange={this.handleChange} />
-                <Button type='submit' colorScheme='linkedin' size='sm' isDisabled={(this.state.data.length && !this.state.isLoading) ? false : true}
+                <Button colorScheme='linkedin' size='sm' isDisabled={(this.state.data.length && !this.state.isLoading) ? false : true}
                   onClick={this.exportingMyConnectionSections}>Export My Connections Section's</Button>
-                <Button type='button' whiteSpace={'pre-line'} colorScheme={'linkedin'} size='sm' isDisabled={(this.state.isLoading || this.state.data.length) ? false : true} onClick={() => {
-                  this.setState({
-                    isLoading: true
-                  })
-                  axios.post(`http://localhost:3333/api/bot/exporting/user_connection/${this.state.count}?my_connection=1`).then(() => {
-                    this.getData(this.state.current_page)
-                  })
-                    .catch((e) => {
-                      this.setState({
-                        isLoading: false
-                      })
-                      console.log(e.response.data)
+                <Button type='button' whiteSpace={'pre-line'} colorScheme={'linkedin'} size='sm' isDisabled={(this.state.data.length && !this.state.isLoading) ? false : true}
+                  onClick={() => {
+                    this.setState({
+                      isLoading: true
                     })
-                }}>
+                    axios.post(`http://localhost:3333/api/bot/exporting/user_connection/${this.state.count}?my_connection=1`).then(() => {
+                      this.getData(this.state.current_page)
+                    })
+                      .catch((e) => {
+                        this.setState({
+                          isLoading: false
+                        })
+                        console.log(e.response.data)
+                      })
+                  }}>
                   <Text width={'100%'} isDisabled={(!this.state.isLoading) ? false : true} py={"5"}>Export Users Connection Name's</Text>
                 </Button>
-                <Button type='button' colorScheme={'red'} size='sm' isDisabled={(!this.state.isLoading) ? false : true} onClick={() => {
-                  this.setState({
-                    isLoading: true
-                  })
-                  axios.delete(`http://localhost:3333/api/connections/delete_all`).then(() => {
-                    this.getData(this.state.current_page)
-                  })
-                }}>Reset</Button>
+
+                <Button type='button' colorScheme={'red'} size='sm' isDisabled={(!this.state.isLoading) ? false : true}
+                  onClick={this.ResetApi}>Reset</Button>
               </Stack>
             </CardHeader>
             <CardBody textAlign={'center'}>
@@ -134,6 +140,7 @@ export default class Profile extends Component {
                     <Thead>
                       <Tr>
                         <Th>name</Th>
+                        <Th>current job title</Th>
                         <Th>is From MyConnection?</Th>
                         <Th>exported Connection list?</Th>
                         <Th>exported section Data?</Th>
@@ -148,6 +155,7 @@ export default class Profile extends Component {
                         return (
                           <Tr key={index}>
                             <Td>{item.name}</Td>
+                            <Td>{item.current_job_title}</Td>
                             <Td>{(item.isFromMyConnection) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>
                             <Td>{(item.exportedConnectionData) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>
                             <Td>{(item.exportedSectionsData) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>

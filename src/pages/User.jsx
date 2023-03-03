@@ -21,7 +21,7 @@ import axios from "axios";
 import React, { Component } from "react"
 import { useParams } from "react-router-dom";
 
-export default class Create extends Component {
+export default class User extends Component {
   constructor() {
     super()
     this.state = {
@@ -107,7 +107,7 @@ export default class Create extends Component {
               </Button>
 
 
-              <Button type='button' colorScheme={'linkedin'} size='sm'
+              {/* <Button type='button' colorScheme={'linkedin'} size='sm'
                 isDisabled={(this.state.does_users_have_connection) ? false : true}
                 onClick={() => {
                   this.setState({
@@ -123,7 +123,7 @@ export default class Create extends Component {
                         isLoading: false
                       })
                     })
-                }}>Export {this.state.user?.name + "'s"} Connection Name's</Button>
+                }}>Export {this.state.user?.name + "'s"} Connection Name's</Button> */}
 
             </Stack>
           </CardHeader>
@@ -135,7 +135,6 @@ export default class Create extends Component {
                     <Tr>
                       <Th>name</Th>
                       <Th>exported section Data?</Th>
-                      <Th>exported Connection list?</Th>
                       {/* <Th>is From MyConnection?</Th>
                         
                         
@@ -143,7 +142,6 @@ export default class Create extends Component {
                         <Th>user connection sections</Th>
                         */}
                       <Th>section details</Th>
-                      <Th>connection link</Th>
 
                     </Tr>
                   </Thead>
@@ -156,7 +154,6 @@ export default class Create extends Component {
                         <Tr key={index}>
                           <Td>{item.user.name}</Td>
                           <Td>{(item.user.exportedSectionsData) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>
-                          <Td>{(item.user.exportedConnectionData) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>
                           <Td>
                             <Box
                               as='a'
@@ -168,10 +165,6 @@ export default class Create extends Component {
                                 <AddIcon as={ExternalLinkIcon} />
                               </Button>
                             </Box>
-                          </Td>
-                          <Td>{(item.user.connection_link) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>
-                          <Td>
-
                           </Td>
 
 
