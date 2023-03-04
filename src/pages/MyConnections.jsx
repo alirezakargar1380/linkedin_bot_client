@@ -122,7 +122,8 @@ export default class MyConnections extends Component {
                         this.setState({
                           isLoading: false
                         })
-                        console.log(e.response.data)
+                        if (e.response.status == 500)
+                          return alert(e.response.data)
                       })
                   }}>
                   <Text width={'100%'} isDisabled={(!this.state.isLoading) ? false : true} py={"5"}>Export Users Connection Name's</Text>

@@ -53,6 +53,9 @@ export default class User extends Component {
         connections: data
       })
     })
+    .catch((e) => {
+      console.log(e)
+    })
   }
 
   exportUsersConnectionSections() {
@@ -76,15 +79,15 @@ export default class User extends Component {
   }
 
   render() {
-    console.log(this.state.isLoading)
     return (
       <>
         <Card mb={10}>
           <CardHeader>
-            <Heading size={'md'}>Name Of User</Heading>
+            <Heading size={'md'}>Details Of User</Heading>
           </CardHeader>
           <CardBody>
-            {this.state.user?.name}
+            <div>{this.state.user?.name}</div>
+            <div>{this.state.user?.current_job_title}</div>
           </CardBody>
         </Card>
 
@@ -152,7 +155,10 @@ export default class User extends Component {
                       })
                       return (
                         <Tr key={index}>
-                          <Td>{item.user.name}</Td>
+                          <Td>
+                            <div>{item.user.name}</div>
+                            <div>{item.user.current_job_title}</div>
+                          </Td>
                           <Td>{(item.user.exportedSectionsData) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>
                           <Td>
                             <Box
