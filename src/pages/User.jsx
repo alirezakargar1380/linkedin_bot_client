@@ -110,8 +110,7 @@ export default class User extends Component {
               </Button>
 
 
-              {/* <Button type='button' colorScheme={'linkedin'} size='sm'
-                isDisabled={(this.state.does_users_have_connection) ? false : true}
+              <Button type='button' colorScheme={'linkedin'} size='sm'
                 onClick={() => {
                   this.setState({
                     isLoading: true
@@ -125,8 +124,9 @@ export default class User extends Component {
                       this.setState({
                         isLoading: false
                       })
+                      alert(e.response.data)
                     })
-                }}>Export {this.state.user?.name + "'s"} Connection Name's</Button> */}
+                }}>Export {this.state.user?.name + "'s"} Connection Name's</Button>
 
             </Stack>
           </CardHeader>
@@ -298,12 +298,12 @@ export default class User extends Component {
                       <Box as="span" flex='1' textAlign='left'>
                         <Text fontSize={'md'}>{item.title}</Text>
                         <Text fontSize={'sm'} color={'gray.400'}>{item.year}</Text>
-                        <Text fontSize={'sm'} color={'gray.400'}>{item.aboutUni}</Text>
+                        <Text fontSize={'sm'} color={'gray.400'}>{item.des}</Text>
                       </Box>
                       <AccordionIcon />
                     </AccordionButton>
                     <AccordionPanel pb={4}>
-                      <Text fontSize={'sm'} color={'gray.500'}>{item.des}</Text>
+                      <Text fontSize={'sm'} color={'gray.500'}>{item.aboutUni}</Text>
                     </AccordionPanel>
                   </AccordionItem>
                 )

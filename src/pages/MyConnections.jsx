@@ -141,7 +141,6 @@ export default class MyConnections extends Component {
                     <Thead>
                       <Tr>
                         <Th>name</Th>
-                        <Th>current job title</Th>
                         <Th>is From MyConnection?</Th>
                         <Th>exported Connection list?</Th>
                         <Th>exported section Data?</Th>
@@ -155,8 +154,10 @@ export default class MyConnections extends Component {
                       {this.state.data.map((item, index) => {
                         return (
                           <Tr key={index}>
-                            <Td>{item.name}</Td>
-                            <Td>{item.current_job_title}</Td>
+                            <Td color={"green.500"}>
+                              <div>{item.name}</div>
+                              <div>{item.current_job_title}</div>
+                            </Td>
                             <Td>{(item.isFromMyConnection) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>
                             <Td>{(item.exportedConnectionData) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>
                             <Td>{(item.exportedSectionsData) ? <AddIcon as={CheckIcon} color={"green.300"} /> : <AddIcon as={CloseIcon} color={"red.400"} />}</Td>
